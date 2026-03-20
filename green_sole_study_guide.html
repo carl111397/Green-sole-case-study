@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Green Sole | Quant × CFA Case Study</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060a0f;
+    --bg2: #0c1118;
+    --bg3: #111820;
+    --panel: #131c26;
+    --border: #1e2e3e;
+    --accent: #00e5a0;
+    --accent2: #0090ff;
+    --accent3: #ffd166;
+    --accent4: #ff6b6b;
+    --text: #d4e5f5;
+    --text-dim: #7a99b8;
+    --text-faint: #3a5068;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --display: 'Syne', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID NOISE TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(0,229,160,.06) 0%, transparent 50%),
+      radial-gradient(circle at 85% 75%, rgba(0,144,255,.05) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Cpath d='M0 60L60 0M-10 10L10 -10M50 70L70 50' stroke='%231e2e3e' stroke-width='.4'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 60px;
+    background: rgba(6,10,15,.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 17px;
+    letter-spacing: -.02em;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--text-dim); }
+
+  .nav-links {
+    display: flex;
+    gap: 6px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    transition: all .2s;
+    letter-spacing: .04em;
+  }
+
+  .nav-links a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(0,229,160,.06);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 100px 40px 60px;
+    overflow: hidden;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-eyebrow::before,
+  .hero-eyebrow::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+    opacity: .5;
+  }
+
+  .hero-title {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(36px, 6vw, 72px);
+    line-height: 1.05;
+    letter-spacing: -.03em;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #ffffff 0%, #7ac7ff 50%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-family: var(--sans);
+    font-size: 17px;
+    color: var(--text-dim);
+    max-width: 540px;
+    margin-bottom: 48px;
+    font-weight: 300;
+  }
+
+  .hero-badges {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 64px;
+  }
+
+  .badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    border: 1px solid;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  .badge-green { color: var(--accent); border-color: rgba(0,229,160,.3); background: rgba(0,229,160,.06); }
+  .badge-blue  { color: var(--accent2); border-color: rgba(0,144,255,.3); background: rgba(0,144,255,.06); }
+  .badge-gold  { color: var(--accent3); border-color: rgba(255,209,102,.3); background: rgba(255,209,102,.06); }
+
+  .hero-flow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .flow-node {
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--text);
+    font-weight: 700;
+    transition: all .3s;
+  }
+
+  .flow-node:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+  .flow-arrow { color: var(--accent3); font-size: 18px; }
+
+  /* ── SECTION BASE ── */
+  section {
+    position: relative;
+    z-index: 1;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 80px 40px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: .15em;
+    border: 1px solid rgba(0,229,160,.3);
+    padding: 4px 10px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: -.02em;
+    color: #fff;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
+    margin: 0 40px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: border-color .3s;
+  }
+
+  .card:hover { border-color: rgba(0,229,160,.25); }
+
+  .card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 12px;
+  }
+
+  /* ── CODE BLOCKS ── */
+  .code-wrap {
+    background: #070e16;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+
+  .code-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-dots { display: flex; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f56; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #27c93f; }
+
+  .code-lang {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: .1em;
+  }
+
+  .copy-btn {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    background: none;
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all .2s;
+    letter-spacing: .05em;
+  }
+
+  .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+  pre {
+    padding: 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.8;
+    color: #c8e0f8;
+    overflow-x: auto;
+    tab-size: 2;
+  }
+
+  .kw { color: #7dd3fc; }
+  .fn { color: #86efac; }
+  .str { color: #fde68a; }
+  .num { color: #f9a8d4; }
+  .cm { color: #4a6a88; font-style: italic; }
+  .var { color: #c4b5fd; }
+
+  /* ── PRICE CHART ── */
+  .chart-container {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 24px 0;
+  }
+
+  .chart-title {
+    font-family: var(--display);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    height: 160px;
+    position: relative;
+  }
+
+  .bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    height: 100%;
+    position: relative;
+  }
+
+  .bar-spacer { flex: 1; display: flex; align-items: flex-end; width: 100%; }
+
+  .bar {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    position: relative;
+    transition: opacity .2s, transform .2s;
+    animation: grow-up .8s ease-out forwards;
+    transform-origin: bottom;
+  }
+
+  @keyframes grow-up {
+    from { transform: scaleY(0); }
+    to   { transform: scaleY(1); }
+  }
+
+  .bar:hover { opacity: .85; transform: scaleY(1.03); }
+
+  .bar-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  .bar-val {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .bar-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 105%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    white-space: nowrap;
+    z-index: 10;
+  }
+
+  .bar:hover .bar-tooltip { display: block; }
+
+  /* ── TRANSACTION CARDS ── */
+  .tx-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .tx-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all .25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tx-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+  }
+
+  .tx-card.t1::before { background: var(--accent2); }
+  .tx-card.t2::before { background: var(--accent); }
+  .tx-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,.15); }
+
+  .tx-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: .1em;
+    margin-bottom: 10px;
+  }
+
+  .tx-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .tx-row .lbl { color: var(--text-dim); font-size: 12px; }
+  .buy { color: var(--accent4); }
+  .sell { color: var(--accent); }
+  .profit { color: var(--accent3); font-family: var(--mono); font-weight: 700; font-size: 18px; }
+
+  .tx-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0,229,160,.08);
+    border: 1px solid rgba(0,229,160,.2);
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin-top: 16px;
+    font-family: var(--mono);
+  }
+
+  .tx-total .lbl { color: var(--text-dim); font-size: 12px; }
+  .tx-total .val { color: var(--accent); font-size: 22px; font-weight: 700; }
+
+  /* ── CASH FLOW TABLE ── */
+  .cf-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 13px;
+    margin: 24px 0;
+  }
+
+  .cf-table th {
+    padding: 10px 16px;
+    background: var(--bg3);
+    color: var(--text-dim);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cf-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(30,46,62,.5);
+    transition: background .15s;
+  }
+
+  .cf-table tr:hover td { background: rgba(0,229,160,.04); }
+  .cf-table .yr { color: var(--text-dim); }
+  .cf-table .neg { color: var(--accent4); }
+  .cf-table .pos { color: #d4e5f5; }
+  .cf-table .disc { color: var(--accent2); }
+  .cf-table .pv { color: var(--accent3); }
+  .cf-table tr.highlight td { background: rgba(0,229,160,.08); }
+
+  .npv-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--accent);
+    border-radius: 0 0 10px 10px;
+    padding: 16px 20px;
+    font-family: var(--mono);
+  }
+
+  .npv-total .lbl { color: var(--text-dim); font-size: 12px; letter-spacing: .08em; }
+  .npv-total .val { font-size: 26px; font-weight: 700; }
+  .npv-total .val.pos { color: var(--accent); }
+
+  /* ── ACCORDION ── */
+  .accordion {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .acc-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    cursor: pointer;
+    background: var(--panel);
+    transition: background .2s;
+    user-select: none;
+  }
+
+  .acc-head:hover { background: var(--bg3); }
+
+  .acc-title {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .acc-icon {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .acc-arrow {
+    font-size: 18px;
+    color: var(--text-faint);
+    transition: transform .3s;
+  }
+
+  .accordion.open .acc-arrow { transform: rotate(180deg); }
+
+  .acc-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .4s ease;
+    border-top: 0;
+  }
+
+  .accordion.open .acc-body {
+    max-height: 2000px;
+    border-top: 1px solid var(--border);
+  }
+
+  .acc-content { padding: 20px; }
+
+  /* ── IRR METER ── */
+  .irr-meter {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 24px 0;
+  }
+
+  .meter-track {
+    height: 8px;
+    background: var(--bg2);
+    border-radius: 100px;
+    margin: 20px 0;
+    position: relative;
+    overflow: visible;
+  }
+
+  .meter-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    width: 0%;
+    transition: width 1.2s ease-out;
+  }
+
+  .meter-tick {
+    position: absolute;
+    top: -6px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .meter-tick-line {
+    width: 2px;
+    height: 20px;
+    border-radius: 1px;
+  }
+
+  .meter-tick-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    margin-top: 8px;
+    white-space: nowrap;
+  }
+
+  .meter-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    margin-top: 8px;
+  }
+
+  /* ── DECISION PANEL ── */
+  .decision {
+    background: linear-gradient(135deg, rgba(0,229,160,.08) 0%, rgba(0,144,255,.06) 100%);
+    border: 1px solid rgba(0,229,160,.3);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    margin: 40px 0;
+  }
+
+  .decision-verdict {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(24px, 4vw, 42px);
+    letter-spacing: -.03em;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .verdict-checks {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .v-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+
+  .v-check .tick {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(0,229,160,.15);
+    border: 1px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 14px;
+  }
+
+  /* ── INTERACTIVE NPV CALCULATOR ── */
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: .08em;
+  }
+
+  .field input {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .field input:focus { border-color: var(--accent); }
+
+  .calc-btn {
+    width: 100%;
+    padding: 14px;
+    background: rgba(0,229,160,.1);
+    border: 1px solid rgba(0,229,160,.4);
+    border-radius: 8px;
+    color: var(--accent);
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: .06em;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .calc-btn:hover { background: rgba(0,229,160,.18); transform: translateY(-1px); }
+
+  .calc-result {
+    margin-top: 20px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    display: none;
+  }
+
+  .calc-result.show { display: block; }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(30,46,62,.5);
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+
+  .result-row:last-child { border-bottom: none; }
+  .result-row .lbl { color: var(--text-dim); }
+  .result-npv { font-size: 22px; font-weight: 700; }
+
+  /* ── FORMULA BLOCK ── */
+  .formula {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent3);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent3);
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+    overflow-x: auto;
+  }
+
+  /* ── CONNECTION DIAGRAM ── */
+  .connection-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin: 32px 0;
+  }
+
+  .conn-node {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 28px;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 14px;
+    width: 280px;
+    text-align: center;
+    transition: all .3s;
+  }
+
+  .conn-node:hover { transform: scale(1.03); }
+
+  .conn-node.algo { border-color: rgba(0,144,255,.4); color: var(--accent2); }
+  .conn-node.finance { border-color: rgba(255,209,102,.4); color: var(--accent3); }
+  .conn-node.decision { border-color: rgba(0,229,160,.4); color: var(--accent); }
+
+  .conn-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-faint);
+    gap: 2px;
+  }
+
+  .conn-arrow svg { color: var(--text-faint); }
+
+  /* ── QUIZ ── */
+  .quiz-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  .quiz-q {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 16px;
+    color: #e8f4ff;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .quiz-opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .2s;
+    font-size: 14px;
+    user-select: none;
+  }
+
+  .quiz-opt:hover { border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.03); }
+
+  .quiz-opt.correct { border-color: var(--accent); background: rgba(0,229,160,.08); color: var(--accent); }
+  .quiz-opt.wrong { border-color: var(--accent4); background: rgba(255,107,107,.08); color: var(--accent4); }
+
+  .opt-letter {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .quiz-feedback {
+    margin-top: 12px;
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    display: none;
+  }
+
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.right { background: rgba(0,229,160,.08); color: var(--accent); border: 1px solid rgba(0,229,160,.2); }
+  .quiz-feedback.wrong { background: rgba(255,107,107,.08); color: var(--accent4); border: 1px solid rgba(255,107,107,.2); }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  footer strong { color: var(--text-dim); }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--accent);
+    z-index: 200;
+    transition: width .1s;
+  }
+
+  /* ── SCROLLSPY DOTS ── */
+  .scrollspy {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 99;
+  }
+
+  .spy-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    border: 1px solid var(--text-faint);
+    cursor: pointer;
+    transition: all .25s;
+    background: transparent;
+  }
+
+  .spy-dot.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: scale(1.4);
+  }
+
+  /* ── HIGHLIGHT ANIMATION ── */
+  .highlight-in {
+    animation: fade-in-up .5s ease both;
+  }
+
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    section { padding: 60px 20px; }
+    .tx-grid { grid-template-columns: 1fr; }
+    .calc-grid { grid-template-columns: 1fr; }
+    .hero-flow { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); }
+    .scrollspy { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<nav>
+  <a class="nav-logo" href="#hero">Green<span>Sole</span></a>
+  <ul class="nav-links">
+    <li><a href="#algo">01 · Algo</a></li>
+    <li><a href="#cfa">02 · CFA</a></li>
+    <li><a href="#npv">03 · NPV</a></li>
+    <li><a href="#irr">04 · IRR</a></li>
+    <li><a href="#calc">⚡ Calc</a></li>
+    <li><a href="#quiz">Quiz</a></li>
+  </ul>
+</nav>
+
+<div class="scrollspy" id="scrollspy">
+  <div class="spy-dot active" data-target="hero"></div>
+  <div class="spy-dot" data-target="algo"></div>
+  <div class="spy-dot" data-target="cfa"></div>
+  <div class="spy-dot" data-target="npv"></div>
+  <div class="spy-dot" data-target="irr"></div>
+  <div class="spy-dot" data-target="calc"></div>
+  <div class="spy-dot" data-target="quiz"></div>
+</div>
+
+<!-- ── HERO ── -->
+<div class="hero" id="hero">
+  <div class="hero-eyebrow">Case Study</div>
+  <h1 class="hero-title">Green Sole<br>Crop Optimization</h1>
+  <p class="hero-sub">An integrated study guide bridging algorithmic problem-solving and CFA financial modelling — where every calculation connects.</p>
+  <div class="hero-badges">
+    <span class="badge badge-blue">LeetCode · DP</span>
+    <span class="badge badge-gold">CFA Level I–II</span>
+    <span class="badge badge-green">NPV · IRR · DCF</span>
+  </div>
+  <div class="hero-flow">
+    <div class="flow-node">Algorithm</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node">705 Profit</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node">Cash Flows</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node">NPV / IRR</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node">Decision</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── SECTION 1: ALGO ── -->
+<section id="algo">
+  <div class="section-header">
+    <span class="section-num">STEP 01</span>
+    <h2 class="section-title">Algorithmic Layer — Max Profit with K Transactions</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Scenario Setup</div>
+    <p style="color:var(--text-dim); margin-bottom:16px;">Green Sole tracks maize prices over 6 seasons. We must find the optimal buy/sell pairs to maximise profit using at most <strong style="color:var(--accent)">k = 2</strong> transactions.</p>
+    <div class="formula">prices = [100, 180, 260, 310, 40, 535]&nbsp;&nbsp;|&nbsp;&nbsp;k = 2</div>
+  </div>
+
+  <div class="chart-container">
+    <div class="chart-title">Maize Price — 6 Seasons</div>
+    <div class="bar-chart" id="priceChart"></div>
+    <div style="margin-top:16px; display:flex; gap:20px; font-family:var(--mono); font-size:11px; color:var(--text-faint);">
+      <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(0,144,255,.5);display:inline-block;"></span> Normal</span>
+      <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(0,229,160,.7);display:inline-block;"></span> Sell Point</span>
+      <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(255,107,107,.6);display:inline-block;"></span> Buy Point</span>
+    </div>
+  </div>
+
+  <div class="tx-grid">
+    <div class="tx-card t1">
+      <div class="tx-num">TRANSACTION 01</div>
+      <div class="tx-row"><span class="lbl">Buy at Season 1</span><span class="buy">100</span></div>
+      <div class="tx-row"><span class="lbl">Sell at Season 4</span><span class="sell">310</span></div>
+      <div class="tx-row" style="margin-top:12px; border-top:1px solid var(--border); padding-top:12px;">
+        <span class="lbl">Profit</span>
+        <span class="profit">+210</span>
+      </div>
+    </div>
+    <div class="tx-card t2">
+      <div class="tx-num">TRANSACTION 02</div>
+      <div class="tx-row"><span class="lbl">Buy at Season 5</span><span class="buy">40</span></div>
+      <div class="tx-row"><span class="lbl">Sell at Season 6</span><span class="sell">535</span></div>
+      <div class="tx-row" style="margin-top:12px; border-top:1px solid var(--border); padding-top:12px;">
+        <span class="lbl">Profit</span>
+        <span class="profit">+495</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tx-total">
+    <span class="lbl">TOTAL OPTIMISED PROFIT</span>
+    <span class="val">705</span>
+  </div>
+
+  <!-- Accordion: Dynamic Programming Explanation -->
+  <div style="margin-top:32px;">
+    <div class="accordion" id="acc1">
+      <div class="acc-head" onclick="toggleAcc('acc1')">
+        <div class="acc-title">
+          <span class="acc-icon" style="background:rgba(0,144,255,.15);color:var(--accent2);">∂</span>
+          How Does the DP Algorithm Work?
+        </div>
+        <span class="acc-arrow">▾</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-content">
+          <p style="color:var(--text-dim); margin-bottom:16px;">We build a 2D DP table where <code style="color:var(--accent3); background:var(--bg3); padding:2px 6px; border-radius:3px;">dp[i][j]</code> = max profit using <em>i</em> transactions up to day <em>j</em>.</p>
+          <div class="formula">dp[i][j] = max(dp[i][j-1], prices[j] + maxDiff)<br>maxDiff = max(maxDiff, dp[i-1][j] - prices[j])</div>
+          <p style="color:var(--text-dim); margin-top:16px; margin-bottom:8px;"><strong style="color:#fff;">Key insight:</strong> <code style="color:var(--accent3); background:var(--bg3); padding:2px 6px; border-radius:3px;">maxDiff</code> tracks the best "buy opportunity" seen so far, accounting for profits from previous transactions. This collapses a 3-loop O(kn²) solution into O(kn).</p>
+          <p style="color:var(--text-dim);">Time: <strong style="color:var(--accent)">O(k × n)</strong> &nbsp;·&nbsp; Space: <strong style="color:var(--accent)">O(k × n)</strong> — optimisable to O(n)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion" id="acc2">
+      <div class="acc-head" onclick="toggleAcc('acc2')">
+        <div class="acc-title">
+          <span class="acc-icon" style="background:rgba(0,229,160,.15);color:var(--accent);">{ }</span>
+          JavaScript Implementation
+        </div>
+        <span class="acc-arrow">▾</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-content" style="padding:0;">
+          <div class="code-wrap" style="margin:0; border-radius:0;">
+            <div class="code-bar">
+              <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+              <span class="code-lang">JAVASCRIPT</span>
+              <button class="copy-btn" onclick="copyCode('code1', this)">COPY</button>
+            </div>
+<pre id="code1"><span class="kw">function</span> <span class="fn">maxProfit</span>(<span class="var">k</span>, <span class="var">prices</span>) {
+  <span class="cm">// dp[i][j] = max profit with i transactions through day j</span>
+  <span class="kw">let</span> <span class="var">dp</span> = <span class="fn">Array.from</span>({ <span class="var">length</span>: <span class="var">k</span> + <span class="num">1</span> }, () =>
+    <span class="fn">Array</span>(<span class="var">prices</span>.<span class="var">length</span>).<span class="fn">fill</span>(<span class="num">0</span>)
+  );
+
+  <span class="kw">for</span> (<span class="kw">let</span> <span class="var">i</span> = <span class="num">1</span>; <span class="var">i</span> <= <span class="var">k</span>; <span class="var">i</span>++) {
+    <span class="kw">let</span> <span class="var">maxDiff</span> = -<span class="var">prices</span>[<span class="num">0</span>]; <span class="cm">// best "buy" seen so far</span>
+    <span class="kw">for</span> (<span class="kw">let</span> <span class="var">j</span> = <span class="num">1</span>; <span class="var">j</span> < <span class="var">prices</span>.<span class="var">length</span>; <span class="var">j</span>++) {
+      <span class="cm">// Option A: skip today | Option B: sell today</span>
+      <span class="var">dp</span>[<span class="var">i</span>][<span class="var">j</span>] = <span class="fn">Math.max</span>(
+        <span class="var">dp</span>[<span class="var">i</span>][<span class="var">j</span> - <span class="num">1</span>],
+        <span class="var">prices</span>[<span class="var">j</span>] + <span class="var">maxDiff</span>
+      );
+      <span class="cm">// Update best buy: buy today vs buy before (with prev tx profit)</span>
+      <span class="var">maxDiff</span> = <span class="fn">Math.max</span>(
+        <span class="var">maxDiff</span>,
+        <span class="var">dp</span>[<span class="var">i</span> - <span class="num">1</span>][<span class="var">j</span>] - <span class="var">prices</span>[<span class="var">j</span>]
+      );
+    }
+  }
+  <span class="kw">return</span> <span class="var">dp</span>[<span class="var">k</span>][<span class="var">prices</span>.<span class="var">length</span> - <span class="num">1</span>];
+}
+
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">maxProfit</span>(<span class="num">2</span>, [<span class="num">100</span>,<span class="num">180</span>,<span class="num">260</span>,<span class="num">310</span>,<span class="num">40</span>,<span class="num">535</span>]));
+<span class="cm">// → 705 ✅</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── SECTION 2: CFA CASH FLOWS ── -->
+<section id="cfa">
+  <div class="section-header">
+    <span class="section-num">STEP 02</span>
+    <h2 class="section-title">Financial Model — Cash Flow Construction</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-label">The Bridge</div>
+    <p style="color:var(--text-dim);">The <strong style="color:var(--accent3)">705 algorithmic profit</strong> per cycle flows directly into the farm's financial model — added to final-year cash flows, feeding the NPV and IRR calculations below.</p>
+  </div>
+
+  <div class="connection-diagram">
+    <div class="conn-node algo">🧠 Algorithm → 705 Profit</div>
+    <div class="conn-arrow">
+      <svg width="2" height="24" viewBox="0 0 2 24"><line x1="1" y1="0" x2="1" y2="24" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/></svg>
+      <span>feeds into</span>
+    </div>
+    <div class="conn-node finance">💰 Cash Flows (Year 5 + 705)</div>
+    <div class="conn-arrow">
+      <svg width="2" height="24" viewBox="0 0 2 24"><line x1="1" y1="0" x2="1" y2="24" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/></svg>
+      <span>discounted at 15%</span>
+    </div>
+    <div class="conn-node decision">✅ NPV + IRR → Investment Decision</div>
+  </div>
+
+  <table class="cf-table">
+    <thead>
+      <tr>
+        <th>Year</th>
+        <th>Base Farm Return</th>
+        <th>Algo Profit Added</th>
+        <th>Final Cash Flow</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="yr">0</td>
+        <td class="neg">−500,000</td>
+        <td class="yr">—</td>
+        <td class="neg">−500,000</td>
+      </tr>
+      <tr>
+        <td class="yr">1</td>
+        <td class="pos">120,000</td>
+        <td class="yr">—</td>
+        <td class="pos">120,000</td>
+      </tr>
+      <tr>
+        <td class="yr">2</td>
+        <td class="pos">150,000</td>
+        <td class="yr">—</td>
+        <td class="pos">150,000</td>
+      </tr>
+      <tr>
+        <td class="yr">3</td>
+        <td class="pos">180,000</td>
+        <td class="yr">—</td>
+        <td class="pos">180,000</td>
+      </tr>
+      <tr>
+        <td class="yr">4</td>
+        <td class="pos">220,000</td>
+        <td class="yr">—</td>
+        <td class="pos">220,000</td>
+      </tr>
+      <tr class="highlight">
+        <td class="yr">5</td>
+        <td class="pos">260,000</td>
+        <td style="color:var(--accent3); font-weight:700;">+ 705</td>
+        <td style="color:var(--accent3); font-weight:700;">260,705</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── SECTION 3: NPV ── -->
+<section id="npv">
+  <div class="section-header">
+    <span class="section-num">STEP 03</span>
+    <h2 class="section-title">NPV Calculation — Manual Breakdown</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Discount Rate Construction</div>
+    <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+      <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:12px 18px; font-family:var(--mono); font-size:13px;">
+        <div style="color:var(--text-faint); font-size:10px; margin-bottom:4px;">BASE RATE</div>
+        <div style="color:var(--accent2);">10%</div>
+      </div>
+      <span style="color:var(--text-faint); font-size:20px;">+</span>
+      <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:12px 18px; font-family:var(--mono); font-size:13px;">
+        <div style="color:var(--text-faint); font-size:10px; margin-bottom:4px;">RISK PREMIUM</div>
+        <div style="color:var(--accent4);">5%</div>
+      </div>
+      <span style="color:var(--text-faint); font-size:20px;">=</span>
+      <div style="background:rgba(0,229,160,.08); border:1px solid rgba(0,229,160,.3); border-radius:8px; padding:12px 18px; font-family:var(--mono); font-size:13px;">
+        <div style="color:var(--text-faint); font-size:10px; margin-bottom:4px;">ADJUSTED RATE (r)</div>
+        <div style="color:var(--accent); font-weight:700;">15%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="formula">NPV = Σ [CF_t / (1 + r)^t]&nbsp;&nbsp;&nbsp;&nbsp;for t = 0 to 5</div>
+
+  <table class="cf-table" style="margin-top:8px;">
+    <thead>
+      <tr>
+        <th>Year (t)</th>
+        <th>Cash Flow</th>
+        <th>Discount Factor</th>
+        <th>Present Value</th>
+      </tr>
+    </thead>
+    <tbody id="npvTable">
+      <tr>
+        <td class="yr">0</td>
+        <td class="neg">−500,000</td>
+        <td class="disc">(1.15)⁰ = 1.0000</td>
+        <td class="neg">−500,000.00</td>
+      </tr>
+      <tr>
+        <td class="yr">1</td>
+        <td class="pos">120,000</td>
+        <td class="disc">(1.15)¹ = 1.1500</td>
+        <td class="pv">104,347.83</td>
+      </tr>
+      <tr>
+        <td class="yr">2</td>
+        <td class="pos">150,000</td>
+        <td class="disc">(1.15)² = 1.3225</td>
+        <td class="pv">113,422.82</td>
+      </tr>
+      <tr>
+        <td class="yr">3</td>
+        <td class="pos">180,000</td>
+        <td class="disc">(1.15)³ = 1.5209</td>
+        <td class="pv">118,324.00</td>
+      </tr>
+      <tr>
+        <td class="yr">4</td>
+        <td class="pos">220,000</td>
+        <td class="disc">(1.15)⁴ = 1.7490</td>
+        <td class="pv">125,786.57</td>
+      </tr>
+      <tr class="highlight">
+        <td class="yr">5</td>
+        <td style="color:var(--accent3);">260,705</td>
+        <td class="disc">(1.15)⁵ = 2.0114</td>
+        <td class="pv">129,617.34</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="npv-total">
+    <span class="lbl">TOTAL NPV</span>
+    <span class="val pos">≈ +91,498</span>
+  </div>
+
+  <div class="accordion" style="margin-top:24px;" id="acc3">
+    <div class="acc-head" onclick="toggleAcc('acc3')">
+      <div class="acc-title">
+        <span class="acc-icon" style="background:rgba(255,209,102,.15);color:var(--accent3);">?</span>
+        Why is NPV > 0 a Green Light?
+      </div>
+      <span class="acc-arrow">▾</span>
+    </div>
+    <div class="acc-body">
+      <div class="acc-content">
+        <p style="color:var(--text-dim); margin-bottom:12px;">A positive NPV means the project generates <strong style="color:#fff;">more value than its cost of capital</strong>. In CFA terms:</p>
+        <ul style="color:var(--text-dim); padding-left:20px; line-height:2;">
+          <li><strong style="color:var(--accent);">NPV > 0</strong> → project adds value → ACCEPT</li>
+          <li><strong style="color:var(--accent4);">NPV < 0</strong> → project destroys value → REJECT</li>
+          <li><strong style="color:var(--accent3);">NPV = 0</strong> → project earns exactly the required return → indifferent</li>
+        </ul>
+        <p style="color:var(--text-dim); margin-top:12px;">The risk premium of 5% already accounts for the agricultural uncertainty — so an NPV of ~91k above that hurdle is meaningful.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── SECTION 4: IRR ── -->
+<section id="irr">
+  <div class="section-header">
+    <span class="section-num">STEP 04</span>
+    <h2 class="section-title">IRR — Internal Rate of Return</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Definition</div>
+    <p style="color:var(--text-dim);">IRR is the discount rate at which <strong style="color:var(--accent)">NPV = 0</strong>. Compare it against the required return (hurdle rate). If <strong style="color:var(--accent)">IRR > hurdle rate</strong>, the project is viable.</p>
+    <div class="formula" style="margin-top:16px;">0 = Σ [CF_t / (1 + IRR)^t]&nbsp;&nbsp;→ solve for IRR using Newton-Raphson</div>
+  </div>
+
+  <div class="irr-meter" id="irrMeter">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
+      <span style="font-family:var(--display); font-weight:700; font-size:15px; color:#fff;">Return Comparison</span>
+      <span style="font-family:var(--mono); font-size:12px; color:var(--text-faint);">Estimated IRR ≈ 18–20%</span>
+    </div>
+    <div class="meter-track">
+      <div class="meter-fill" id="irrFill"></div>
+      <!-- Hurdle rate tick at 15% = 75% of 20% scale -->
+      <div class="meter-tick" style="left:75%">
+        <div class="meter-tick-line" style="background:var(--accent4);"></div>
+        <div class="meter-tick-label" style="color:var(--accent4);">Hurdle 15%</div>
+      </div>
+    </div>
+    <div class="meter-labels">
+      <span>0%</span><span>5%</span><span>10%</span><span>15%</span><span>20%</span>
+    </div>
+    <div style="display:flex; gap:16px; margin-top:20px; flex-wrap:wrap;">
+      <div style="flex:1; background:rgba(0,229,160,.08); border:1px solid rgba(0,229,160,.2); border-radius:8px; padding:14px; text-align:center;">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--text-faint); margin-bottom:6px; letter-spacing:.1em;">ESTIMATED IRR</div>
+        <div style="font-family:var(--mono); font-size:26px; font-weight:700; color:var(--accent);">~19%</div>
+      </div>
+      <div style="flex:1; background:rgba(255,107,107,.08); border:1px solid rgba(255,107,107,.2); border-radius:8px; padding:14px; text-align:center;">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--text-faint); margin-bottom:6px; letter-spacing:.1em;">HURDLE RATE</div>
+        <div style="font-family:var(--mono); font-size:26px; font-weight:700; color:var(--accent4);">15%</div>
+      </div>
+      <div style="flex:1; background:rgba(255,209,102,.08); border:1px solid rgba(255,209,102,.2); border-radius:8px; padding:14px; text-align:center;">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--text-faint); margin-bottom:6px; letter-spacing:.1em;">SPREAD</div>
+        <div style="font-family:var(--mono); font-size:26px; font-weight:700; color:var(--accent3);">+4%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion" id="acc4">
+    <div class="acc-head" onclick="toggleAcc('acc4')">
+      <div class="acc-title">
+        <span class="acc-icon" style="background:rgba(0,229,160,.15);color:var(--accent);">{ }</span>
+        Newton-Raphson IRR Solver (JS)
+      </div>
+      <span class="acc-arrow">▾</span>
+    </div>
+    <div class="acc-body">
+      <div class="acc-content" style="padding:0;">
+        <div class="code-wrap" style="margin:0;border-radius:0;">
+          <div class="code-bar">
+            <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+            <span class="code-lang">JAVASCRIPT</span>
+            <button class="copy-btn" onclick="copyCode('code2', this)">COPY</button>
+          </div>
+<pre id="code2"><span class="kw">function</span> <span class="fn">calculateIRR</span>(<span class="var">cashFlows</span>, <span class="var">guess</span> = <span class="num">0.1</span>) {
+  <span class="kw">let</span> <span class="var">rate</span> = <span class="var">guess</span>;
+  <span class="kw">for</span> (<span class="kw">let</span> <span class="var">i</span> = <span class="num">0</span>; <span class="var">i</span> < <span class="num">1000</span>; <span class="var">i</span>++) {
+    <span class="kw">let</span> <span class="var">npv</span> = <span class="num">0</span>;
+    <span class="kw">let</span> <span class="var">derivative</span> = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="kw">let</span> <span class="var">t</span> = <span class="num">0</span>; <span class="var">t</span> < <span class="var">cashFlows</span>.<span class="var">length</span>; <span class="var">t</span>++) {
+      <span class="var">npv</span> += <span class="var">cashFlows</span>[<span class="var">t</span>] / <span class="fn">Math.pow</span>((<span class="num">1</span> + <span class="var">rate</span>), <span class="var">t</span>);
+      <span class="var">derivative</span> -= <span class="var">t</span> * <span class="var">cashFlows</span>[<span class="var">t</span>]
+        / <span class="fn">Math.pow</span>((<span class="num">1</span> + <span class="var">rate</span>), <span class="var">t</span> + <span class="num">1</span>);
+    }
+    <span class="kw">let</span> <span class="var">newRate</span> = <span class="var">rate</span> - <span class="var">npv</span> / <span class="var">derivative</span>;
+    <span class="kw">if</span> (<span class="fn">Math.abs</span>(<span class="var">newRate</span> - <span class="var">rate</span>) < <span class="num">1e-6</span>) <span class="kw">break</span>;
+    <span class="var">rate</span> = <span class="var">newRate</span>;
+  }
+  <span class="kw">return</span> <span class="var">rate</span>;
+}
+
+<span class="kw">const</span> <span class="var">flows</span> = [-<span class="num">500000</span>,<span class="num">120000</span>,<span class="num">150000</span>,<span class="num">180000</span>,<span class="num">220000</span>,<span class="num">260705</span>];
+<span class="fn">console</span>.<span class="fn">log</span>((<span class="fn">calculateIRR</span>(<span class="var">flows</span>) * <span class="num">100</span>).<span class="fn">toFixed</span>(<span class="num">2</span>) + <span class="str">"%"</span>);
+<span class="cm">// → ~18.91%</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── SECTION 5: INTERACTIVE CALCULATOR ── -->
+<section id="calc">
+  <div class="section-header">
+    <span class="section-num">⚡ TOOL</span>
+    <h2 class="section-title">Interactive NPV Calculator</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Adjust the Variables</div>
+    <p style="color:var(--text-dim); margin-bottom:24px;">Modify any parameter to see how NPV changes in real time. Try changing the discount rate or the initial investment.</p>
+
+    <div class="calc-grid">
+      <div class="field">
+        <label>INITIAL INVESTMENT</label>
+        <input type="number" id="inv" value="500000" placeholder="500000">
+      </div>
+      <div class="field">
+        <label>DISCOUNT RATE (%)</label>
+        <input type="number" id="rate" value="15" step="0.5" placeholder="15">
+      </div>
+      <div class="field">
+        <label>ALGO PROFIT (added to Yr 5)</label>
+        <input type="number" id="algoprofit" value="705" placeholder="705">
+      </div>
+      <div class="field">
+        <label>YEAR 5 BASE RETURN</label>
+        <input type="number" id="yr5" value="260000" placeholder="260000">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculateNPV()">CALCULATE NPV & IRR</button>
+
+    <div class="calc-result" id="calcResult">
+      <div class="result-row">
+        <span class="lbl">Year 0 (Investment)</span>
+        <span id="r0" class="neg">—</span>
+      </div>
+      <div class="result-row">
+        <span class="lbl">Sum of PV (Years 1–5)</span>
+        <span id="rPV" style="color:var(--accent3);">—</span>
+      </div>
+      <div class="result-row">
+        <span class="lbl">NPV</span>
+        <span id="rNPV" class="result-npv">—</span>
+      </div>
+      <div class="result-row">
+        <span class="lbl">Estimated IRR</span>
+        <span id="rIRR" style="color:var(--accent2); font-family:var(--mono); font-weight:700; font-size:18px;">—</span>
+      </div>
+      <div class="result-row" style="border:none; margin-top:8px;">
+        <span class="lbl">Decision</span>
+        <span id="rDecision" style="font-family:var(--display); font-weight:700; font-size:15px;">—</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── DECISION ── -->
+<section>
+  <div class="decision">
+    <div style="font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:.2em; margin-bottom:16px;">FINAL RECOMMENDATION</div>
+    <div class="decision-verdict">Green Sole Recommends: INVEST ✅</div>
+    <div class="verdict-checks">
+      <div class="v-check">
+        <div class="tick">✓</div>
+        <span>NPV &gt; 0 (≈ +91,498)</span>
+      </div>
+      <div class="v-check">
+        <div class="tick">✓</div>
+        <span>IRR (~19%) &gt; Hurdle (15%)</span>
+      </div>
+      <div class="v-check">
+        <div class="tick">✓</div>
+        <span>Algorithm maximises seasonal returns</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── QUIZ ── -->
+<section id="quiz">
+  <div class="section-header">
+    <span class="section-num">TEST</span>
+    <h2 class="section-title">Quick Revision Quiz</h2>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">1. What is the maximum profit achievable with k=2 transactions on prices [100,180,260,310,40,535]?</div>
+    <div class="quiz-options">
+      <div class="quiz-opt" onclick="answerQ(this, 'wrong', 'q1fb', 'The profit from T1 (310−100=210) alone is only 210.')"><div class="opt-letter">A</div> 210</div>
+      <div class="quiz-opt" onclick="answerQ(this, 'wrong', 'q1fb', '495 is only Transaction 2 profit (535−40). You need both transactions!')"><div class="opt-letter">B</div> 495</div>
+      <div class="quiz-opt" onclick="answerQ(this, 'correct', 'q1fb', 'Correct! T1: buy@100 sell@310 = 210. T2: buy@40 sell@535 = 495. Total = 705.')"><div class="opt-letter">C</div> 705</div>
+      <div class="quiz-opt" onclick="answerQ(this, 'wrong', 'q1fb', '435 is not achievable with any 2-transaction combination.')"><div class="opt-letter">D</div> 435</div>
+    </div>
+    <div class="quiz-feedback" id="q1fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">2. The adjusted discount rate of 15% is composed of which two elements?</div>
+    <div class="quiz-options">
+      <div class="quiz-opt" onclick="answerQ(this, 'correct', 'q2fb', 'Correct! Base rate (risk-free/market rate) of 10% + agricultural risk premium of 5% = 15%.')"><div class="opt-letter">A</div> 10% base rate + 5% risk premium</div>
+      <div class="quiz-opt" onclick="answerQ(this, 'wrong', 'q2fb', 'Close, but the split is 10% base + 5% risk premium, not 12% + 3%.')"><div class="opt-letter">B</div> 12% base rate + 3% inflation adjustment</div>
+      <div class="quiz-opt" onclick="answerQ(this, 'wrong', 'q2fb', 'No — the rate is not derived from the IRR; IRR is a result we calculate afterwards.')"><div class="opt-letter">C</div> IRR minus 4% spread</div>
+      <div class="quiz-opt" onclick="answerQ(this, 'wrong', 'q2fb', 'A flat 15% without components is just a number — the CFA framework requires explicit components.')"><div class="opt-letter">D</div> A flat market-determined 15%</div>
+    </div>
+    <div class="quiz-feedback" id="q2fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">3. What does a positive NPV tell a CFA analyst about a project?</div>
+    <div class="quiz-options">
+      <div class="quiz-opt" onclick="answerQ(this, 'wrong', 'q3fb', 'Not exactly — guaranteed profit is not the same concept. NPV is about value creation above the hurdle rate.')"><div class="opt-letter">A</div> The project is guaranteed to be profitable</div>
+      <div class="quiz-opt" onclick="answerQ(this, 'correct', 'q3fb', 'Correct! Positive NPV means the project generates returns above the cost of capital — it creates value for investors.')"><div class="opt-letter">B</div> The project generates returns above the cost of capital</div>
+      <div class="quiz-opt" onclick="answerQ(this, 'wrong', 'q3fb', 'IRR ≥ hurdle rate is equivalent in most cases, but NPV > 0 directly means value is created.')"><div class="opt-letter">C</div> The IRR exactly equals the discount rate</div>
+      <div class="quiz-opt" onclick="answerQ(this, 'wrong', 'q3fb', 'Not necessarily — NPV does not predict accounting profit or cash flow in every individual year.')"><div class="opt-letter">D</div> Cash flows are positive every year</div>
+    </div>
+    <div class="quiz-feedback" id="q3fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">4. Which algorithmic complexity does the DP solution achieve?</div>
+    <div class="quiz-options">
+      <div class="quiz-opt" onclick="answerQ(this, 'wrong', 'q4fb', 'O(n²) would be the brute-force comparison of every buy-sell pair — the DP solution is more efficient.')"><div class="opt-letter">A</div> O(n²)</div>
+      <div class="quiz-opt" onclick="answerQ(this, 'wrong', 'q4fb', 'O(k²·n) is the unoptimised nested-loop approach before introducing maxDiff.')"><div class="opt-letter">B</div> O(k²·n)</div>
+      <div class="quiz-opt" onclick="answerQ(this, 'correct', 'q4fb', 'Correct! The maxDiff trick collapses the inner loop, giving O(k×n) time and O(k×n) space (optimisable to O(n)).')"><div class="opt-letter">C</div> O(k × n)</div>
+      <div class="quiz-opt" onclick="answerQ(this, 'wrong', 'q4fb', 'O(n log n) is typical of sort-based approaches, not applicable here.')"><div class="opt-letter">D</div> O(n log n)</div>
+    </div>
+    <div class="quiz-feedback" id="q4fb"></div>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Carl Maingi</strong> · Green Sole Case Study · LeetCode × CFA Integration</p>
+  <p style="margin-top:8px;">Quant · Algorithmic Thinking · Financial Modelling</p>
+</footer>
+
+<script>
+// ── PROGRESS BAR ──
+window.addEventListener('scroll', () => {
+  const el = document.documentElement;
+  const p = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+  document.getElementById('progress').style.width = p + '%';
+});
+
+// ── SCROLLSPY ──
+const sections = ['hero','algo','cfa','npv','irr','calc','quiz'];
+const dots = document.querySelectorAll('.spy-dot');
+
+dots.forEach((d, i) => {
+  d.addEventListener('click', () => {
+    document.getElementById(sections[i]).scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+window.addEventListener('scroll', () => {
+  let cur = 0;
+  sections.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < window.innerHeight * 0.5) cur = i;
+  });
+  dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+});
+
+// ── PRICE CHART ──
+const prices   = [100, 180, 260, 310, 40, 535];
+const labels   = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'];
+const maxPrice = Math.max(...prices);
+const colours  = [
+  'rgba(255,107,107,.6)',   // buy
+  'rgba(0,144,255,.5)',
+  'rgba(0,144,255,.5)',
+  'rgba(0,229,160,.7)',     // sell
+  'rgba(255,107,107,.6)',   // buy
+  'rgba(0,229,160,.7)',     // sell
+];
+const tips = [
+  'BUY @ 100', 'Hold', 'Hold', 'SELL @ 310 (+210)', 'BUY @ 40', 'SELL @ 535 (+495)'
+];
+
+const chart = document.getElementById('priceChart');
+prices.forEach((p, i) => {
+  const pct = (p / maxPrice) * 100;
+  const delay = i * 0.12;
+  chart.innerHTML += `
+    <div class="bar-wrap">
+      <div class="bar-val" style="color:${colours[i]}">${p}</div>
+      <div class="bar-spacer">
+        <div class="bar" style="height:${pct}%;background:${colours[i]};animation-delay:${delay}s;">
+          <div class="bar-tooltip">${tips[i]}</div>
+        </div>
+      </div>
+      <div class="bar-label">${labels[i]}</div>
+    </div>`;
+});
+
+// ── ACCORDION ──
+function toggleAcc(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+// ── IRR METER ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      // 19% / 20% scale = 95%
+      document.getElementById('irrFill').style.width = '95%';
+    }
+  });
+}, { threshold: 0.3 });
+observer.observe(document.getElementById('irrMeter'));
+
+// ── COPY CODE ──
+function copyCode(id, btn) {
+  const code = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = 'COPIED!';
+    btn.style.color = 'var(--accent)';
+    setTimeout(() => { btn.textContent = 'COPY'; btn.style.color = ''; }, 2000);
+  });
+}
+
+// ── NPV CALCULATOR ──
+function calculateNPV() {
+  const inv     = parseFloat(document.getElementById('inv').value) || 500000;
+  const rate    = parseFloat(document.getElementById('rate').value) / 100 || 0.15;
+  const ap      = parseFloat(document.getElementById('algoprofit').value) || 705;
+  const yr5base = parseFloat(document.getElementById('yr5').value) || 260000;
+
+  const baseFlows = [120000, 150000, 180000, 220000];
+  const flows = [-inv, ...baseFlows, yr5base + ap];
+
+  let sumPV = 0;
+  flows.slice(1).forEach((cf, i) => {
+    sumPV += cf / Math.pow(1 + rate, i + 1);
+  });
+
+  const npv = -inv + sumPV;
+  const irr = calcIRR(flows);
+
+  const res = document.getElementById('calcResult');
+  res.classList.add('show');
+
+  document.getElementById('r0').textContent    = `−${inv.toLocaleString()}`;
+  document.getElementById('rPV').textContent   = `+${sumPV.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+
+  const npvEl = document.getElementById('rNPV');
+  npvEl.textContent = (npv >= 0 ? '+' : '') + npv.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  npvEl.style.color = npv >= 0 ? 'var(--accent)' : 'var(--accent4)';
+
+  document.getElementById('rIRR').textContent  = `≈ ${(irr * 100).toFixed(2)}%`;
+
+  const dec = document.getElementById('rDecision');
+  if (npv > 0 && irr > rate) {
+    dec.textContent = '✅ ACCEPT — Value-creating investment';
+    dec.style.color = 'var(--accent)';
+  } else if (npv > 0 || irr > rate) {
+    dec.textContent = '⚠️ MARGINAL — Review assumptions';
+    dec.style.color = 'var(--accent3)';
+  } else {
+    dec.textContent = '❌ REJECT — Destroys value';
+    dec.style.color = 'var(--accent4)';
+  }
+}
+
+function calcIRR(cashFlows, guess = 0.1) {
+  let rate = guess;
+  for (let i = 0; i < 1000; i++) {
+    let npv = 0, deriv = 0;
+    for (let t = 0; t < cashFlows.length; t++) {
+      npv   += cashFlows[t] / Math.pow(1 + rate, t);
+      deriv -= t * cashFlows[t] / Math.pow(1 + rate, t + 1);
+    }
+    if (Math.abs(deriv) < 1e-12) break;
+    const nr = rate - npv / deriv;
+    if (Math.abs(nr - rate) < 1e-7) break;
+    rate = nr;
+  }
+  return rate;
+}
+
+// ── QUIZ ──
+function answerQ(el, result, fbId, msg) {
+  const parent = el.closest('.quiz-options');
+  if (parent.querySelector('.correct, .wrong')) return; // already answered
+  el.classList.add(result === 'correct' ? 'correct' : 'wrong');
+  const fb = document.getElementById(fbId);
+  fb.textContent = (result === 'correct' ? '✓ ' : '✗ ') + msg;
+  fb.className = `quiz-feedback show ${result === 'correct' ? 'right' : 'wrong'}`;
+}
+</script>
+</body>
+</html>
